@@ -3,6 +3,7 @@
 ## Definições
 
 - **Leia todo o conteúdo antes de iniciar e busque entender de fato o desafio proposto;**
+- Faça o fork desse repositório para iniciar o projeto. Lembre-se de deixar o seu repositório público.
 - Utilizar o angular na versão 12 ou superior.
 - Não se trata de um desafio complexo, apesar da leitura ser extensa;
 - O desafio baseia-se em consumir 2 APIs de diferentes fontes de dados com intuito de agregar as informações e solucionar o problema de acordo com o que foi proposto;
