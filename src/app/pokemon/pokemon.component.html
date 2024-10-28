@@ -1,13 +1,20 @@
-<div>
-  <input type="text" [(ngModel)]="pokemonType" placeholder="Digite o tipo ou nome do Pokémon" />
-  <button (click)="getPokemon()">Buscar Pokémon</button>
-</div>
-
-<div *ngIf="errorMessage">{{ errorMessage }}</div>
-
-<div *ngIf="pokemon">
-  <h2>Pokémon: {{ pokemon.name }}</h2>
-  <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}" />
-  <p>Altura: {{ pokemon.height }}</p>
-  <p>Peso: {{ pokemon.weight }}</p>
+<div *ngIf="errorMessage" class="text-red-600 font-bold text-center my-4">{{ errorMessage }}</div>
+<div *ngIf="pokemon$" class="d w-full max-w-md mx-auto border-4 border-[#606878] bg-gradient-to-b from-yellow-200 to-yellow-400 font-press-start shadow-menus">
+  <div *ngIf="pokemon$ | async as pokemon" class="card-content">
+    <div class="bg-[#c8a8e8] text-white py-2 px-4 flex justify-between items-center tracking-normal">
+      <h2 class="text-xl drop-shadow-pixel">{{ pokemon.name.split('-').join(' ') | uppercase }}</h2>
+      <span class="text-sm font-semibold drop-shadow-pixel">120/120 HP</span>
+    </div>
+    <div class="border-4 aspect-video border-[#b088d0] bg-pokemon bg-no-repeat bg-cover grid place-items-center">
+      <img [src]="pokemon.sprites.front_default" [alt]="pokemon.name" class="w-3/5 mx-auto object-contain">
+    </div>
+    <div class="info-container bg-white p-4 border-4 border-black ">
+      <p class="mb-2 text-sm"><strong>Tipo(s):</strong> {{ getPokemonTypes(pokemon) }}</p>
+      <p class="mb-2 text-sm"><strong>Temperatura:</strong> {{ temperature }}°C</p>
+      <p class="mb-2 text-sm"><strong>{{ isRaining ? 'Está chovendo!' : 'Não está chovendo' }}</strong></p>
+    </div>
+    <div class="bg-yellow-100 p-2 text-xs text-center">
+      <p>© 2024 Pokémon. TM, ® Nintendo.</p>
+    </div>
+  </div>
 </div>
