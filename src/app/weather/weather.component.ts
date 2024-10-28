@@ -1,52 +1,77 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { environment } from '../../environments/environment';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { OPEN_WEATHER_API_KEY } from '../app.config';
+import { catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-weather',
   standalone: true,
   templateUrl: './weather.component.html',
   styleUrl: './weather.component.css',
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule],
 })
 export class WeatherComponent {
   weather: any;
   city: string = '';
   errorMessage: string | null = null;
   isRaining: boolean = false;
-  private apiKey = environment.openWeatherApiKey;
-  private apiUrl = 'https://api.openweathermap.org/data/2.5/weather'
+  private apiUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
-  @Output() temperatureFetched = new EventEmitter<{isRaining: boolean, temperature: number}>();
+  @Output() temperatureFetched = new EventEmitter<{
+    isRaining: boolean;
+    temperature: number;
+  }>();
 
-  async getWeather(city: string): Promise<void> {
+  constructor(
+    @Inject(OPEN_WEATHER_API_KEY) private apiKey: string,
+    private http: HttpClient
+  ) {}
+
+  getWeather(city: string): void {
     const url = `${this.apiUrl}?q=${city}&appid=${this.apiKey}&units=metric`;
-    try{
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Cidade não encontrada!');
-      }
-      this.weather = await response.json();
-      this.errorMessage = null;
-
-      this.temperatureFetched.emit({
-        isRaining: this.checkRain(),
-        temperature: this.weather.main.temp,
+    this.http
+      .get(url)
+      .pipe(catchError(this.handleError))
+      .subscribe({
+        next: (data: any) => {
+          this.weather = data;
+          this.errorMessage = null;
+          this.temperatureFetched.emit({
+            isRaining: this.checkRain(),
+            temperature: this.weather.main.temp,
+          });
+        },
+        error: (error) => {
+          this.errorMessage = error;
+        },
       });
-    } catch (error: any) {
-      this.errorMessage = error.message;
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Ocorreu um erro desconhecido.';
+    if (error.status === 404) {
+      errorMessage = 'Cidade não encontrada!';
     }
+    return throwError(() => errorMessage);
   }
 
   checkRain(): boolean {
-    return !!(this.weather.rain && this.weather.rain['1h'] > 0);
+    if (!this.weather || !this.weather.weather || !this.weather.weather.length) {
+      return false;
+    }
+
+    const weatherCondition = this.weather.weather[0].main.toLowerCase();
+    const rainConditions = ['rain', 'drizzle', 'thunderstorm'];
+
+    this.isRaining = rainConditions.includes(weatherCondition);
+    return this.isRaining;
   }
 
-
-  async searchWeather(): Promise<void>{
+  searchWeather(): void {
     if (this.city) {
-      await this.getWeather(this.city);
+      this.getWeather(this.city);
     }
   }
 }
