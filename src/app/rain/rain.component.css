@@ -1,0 +1,15 @@
+.raindrop {
+  position: absolute;
+  top: -20px;
+  width: 2px;
+  height: 20px;
+  background-color: #00f;
+  opacity: 0.5;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(calc(100vh + 20px));
+  }
+}
