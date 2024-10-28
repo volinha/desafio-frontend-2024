@@ -1,5 +1,9 @@
-<main class="main">
-  <h1>Busca de Clima e Pokémon</h1>
-  <app-weather></app-weather>
-  <app-pokemon></app-pokemon>
+<main class="min-h-screen w-full p-4 flex flex-col justify-center items-center font-press-start">
+  <div class="w-full max-w-md space-y-4 bg-white p-4 border-4 border-[#606060] shadow-menus">
+    <p class="text-center">Olá treinador!</p>
+    <p class="text-center">Qual cidade você deseja explorar?</p>
+    <app-weather (temperatureFetched)="onTemperatureFetched($event)"></app-weather>
+    <app-pokemon [weatherData]="weatherData"></app-pokemon>
+  </div>
+  <app-rain [isRaining]="weatherData?.isRaining || false"></app-rain>
 </main>
