@@ -22,6 +22,18 @@ type Pokemon = {
 type PokemonListByType  = {
   pokemon: PokemonRef[]
 }
+
+const translateTypes = {
+  normal: 'Normal',
+  fire: 'Fogo',
+  water: 'Água',
+  electric: 'Elétrico',
+  grass: 'Grama',
+  ice: 'Gelo',
+  ground: 'Terra',
+  bug: 'Inseto',
+  rock: 'Pedra',
+}
 @Component({
   selector: 'app-pokemon',
   standalone: true,
@@ -36,20 +48,17 @@ export class PokemonComponent {
   errorMessage: string | null = null;
   temperature: number = 0;
   isRaining: boolean = false;
+  city: string = '';
   lastPokemonUrl: string | null = null;
   private apiUrl = 'https://pokeapi.co/api/v2/';
 
   constructor(private http: HttpClient) {}
 
-  // carrega o pokemon ao iniciar, para visualizar o design sem precisar clicar no botão
-  ngOnInit(): void {
-    this.getPokemonByType();
-  }
-
-  @Input() set weatherData(data: { isRaining: boolean; temperature: number } | null) {
+  @Input() set weatherData(data: { isRaining: boolean; temperature: number; city: string } | null) {
     if (!data) return;
     this.temperature = data.temperature;
     this.isRaining = data.isRaining;
+    this.city = data.city;
     if (data.isRaining) {
       this.type = 'electric';
     } else if (data.temperature < 5) {
@@ -102,7 +111,9 @@ export class PokemonComponent {
   }
 
   getPokemonTypes(pokemon: any): string {
-    return pokemon.types.map((type: any) => type.type.name).join(', ');
+    return pokemon.types
+    .map((type: any) => translateTypes[type.type.name as keyof typeof translateTypes] || type.type.name)
+    .join(', ');
   }
 }
 

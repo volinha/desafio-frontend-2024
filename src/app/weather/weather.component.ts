@@ -22,6 +22,7 @@ export class WeatherComponent {
   @Output() temperatureFetched = new EventEmitter<{
     isRaining: boolean;
     temperature: number;
+    city: string;
   }>();
 
   constructor(
@@ -41,6 +42,7 @@ export class WeatherComponent {
           this.temperatureFetched.emit({
             isRaining: this.checkRain(),
             temperature: this.weather.main.temp,
+            city: this.city,
           });
         },
         error: (error) => {
