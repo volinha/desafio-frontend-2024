@@ -6,7 +6,7 @@
     <div class="card-content">
       <div class="bg-[#c8a8e8] text-white py-2 px-4 flex justify-between items-center tracking-normal">
         <h2 class="text-xl drop-shadow-pixel">{{ pokemon.name.split('-').join(' ') | uppercase }}</h2>
-        <span class="text-sm font-semibold drop-shadow-pixel">120/120 HP</span>
+        <span class="text-sm font-semibold drop-shadow-pixel">{{ getPokemonStats(pokemon)}} HP</span>
       </div>
       <div class="border-4 aspect-video border-[#b088d0] bg-pokemon bg-no-repeat bg-cover grid place-items-center min-w-16 min-h-16">
         @defer (when pokemon.sprites.front_default) {

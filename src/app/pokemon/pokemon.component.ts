@@ -16,7 +16,13 @@ type Pokemon = {
   name: string;
   sprites: {
     front_default: string;
-  }
+  };
+  stats: Array <{
+    base_stat: number;
+    stat: {
+      name: string;
+    }
+  }>
 }
 
 type PokemonListByType  = {
@@ -108,6 +114,11 @@ export class PokemonComponent {
         this.errorMessage = 'Nenhum Pokémon encontrado para o tipo especificado!';
       }
     });
+  }
+
+  getPokemonStats(pokemon: Pokemon): number {
+    const hpStat = pokemon.stats.find(stat => stat.stat.name === 'hp');
+    return hpStat ? hpStat.base_stat : 0;
   }
 
   getPokemonTypes(pokemon: any): string {
