@@ -36,6 +36,7 @@ export class PokemonComponent {
   errorMessage: string | null = null;
   temperature: number = 0;
   isRaining: boolean = false;
+  lastPokemonUrl: string | null = null;
   private apiUrl = 'https://pokeapi.co/api/v2/';
 
   constructor(private http: HttpClient) {}
@@ -79,8 +80,20 @@ export class PokemonComponent {
       })
     ).subscribe(response => {
       if (response && response.pokemon && response.pokemon.length > 0) {
-        const randomIndex = Math.floor(Math.random() * response.pokemon.length);
-        const randomPokemon = response.pokemon[randomIndex];
+        let attempts = 0;
+        let randomPokemon;
+
+        do {
+          const randomIndex = Math.floor(Math.random() * response.pokemon.length);
+          randomPokemon = response.pokemon[randomIndex];
+          attempts++;
+        } while (
+          this.lastPokemonUrl === randomPokemon.pokemon.url &&
+          attempts < 5 &&
+          response.pokemon.length > 1
+        );
+
+        this.lastPokemonUrl = randomPokemon.pokemon.url;
         this.pokemon$ = this.http.get<Pokemon>(randomPokemon.pokemon.url);
       } else {
         this.errorMessage = 'Nenhum Pokémon encontrado para o tipo especificado!';
