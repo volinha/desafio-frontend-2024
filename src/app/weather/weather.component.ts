@@ -5,6 +5,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { OPEN_WEATHER_API_KEY } from '../app.config';
 import { catchError, throwError } from 'rxjs';
 import { WeatherData, WeatherResponse, WeatherError } from '../shared/interfaces';
+import { isWeatherData, isWeatherResponse } from '../shared/guards/type.guards';
 
 @Component({
   selector: 'app-weather',
@@ -27,19 +28,29 @@ export class WeatherComponent {
 
   getWeather(city: string): void {
     const url = `${this.apiUrl}?q=${city}&appid=${this.apiKey}&units=metric`;
-    this.http
-      .get<WeatherResponse>(url)
+
+    this.http.get(url)
       .pipe(catchError(this.handleError))
       .subscribe({
-        next: (data) => {
-          this.weather = data;
+        next: (response: unknown) => {
+          if (!isWeatherResponse(response)) {
+            this.errorMessage = 'Resposta inválida da API';
+            return;
+          }
+
+          this.weather = response;
           this.errorMessage = null;
-          this.temperatureFetched.emit({
+
+          const weatherData = {
             isRaining: this.checkRain(),
-            temperature: this.weather?.main.temp || 0,
+            temperature: response.main.temp,
             city: this.city,
-            weather: this.weather?.weather || [],
-          });
+            weather: response.weather
+          };
+
+          if (isWeatherData(weatherData)) {
+            this.temperatureFetched.emit(weatherData);
+          }
         },
         error: (error) => {
           this.errorMessage = error;

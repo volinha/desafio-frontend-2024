@@ -4,42 +4,9 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
 
-type PokemonTypes = 'normal' | 'fire' | 'water' | 'electric' | 'grass' | 'ice' | 'ground' | 'bug' | 'rock';
-type PokemonRef = {
-  slot: number;
-  pokemon: {
-    name: string;
-    url: string;
-  }
-}
-type Pokemon = {
-  name: string;
-  sprites: {
-    front_default: string;
-  };
-  stats: Array <{
-    base_stat: number;
-    stat: {
-      name: string;
-    }
-  }>
-}
-
-type PokemonListByType  = {
-  pokemon: PokemonRef[]
-}
-
-const translateTypes = {
-  normal: 'Normal',
-  fire: 'Fogo',
-  water: 'Água',
-  electric: 'Elétrico',
-  grass: 'Grama',
-  ice: 'Gelo',
-  ground: 'Terra',
-  bug: 'Inseto',
-  rock: 'Pedra',
-}
+import { Pokemon, PokemonListByType, PokemonType } from '../shared/interfaces';
+import { translateTypes } from '../shared/types';
+import { isPokemon, isPokemonTypeName } from '../shared/guards/type.guards';
 @Component({
   selector: 'app-pokemon',
   standalone: true,
@@ -47,9 +14,10 @@ const translateTypes = {
   styleUrls: ['./pokemon.component.css'],
   imports: [CommonModule, FormsModule]
 })
+
 export class PokemonComponent {
   pokemonType: string = '';
-  type: PokemonTypes = 'normal';
+  type: string = 'normal';
   pokemon$: Observable<Pokemon> | null = null;
   errorMessage: string | null = null;
   temperature: number = 0;
@@ -88,6 +56,11 @@ export class PokemonComponent {
   }
 
   getPokemonByType(): void {
+    if (!isPokemonTypeName(this.type)) {
+      this.errorMessage = 'Tipo de Pokémon inválido!';
+      return;
+    }
+
     this.http.get<PokemonListByType>(`${this.apiUrl}/type/${this.type}`).pipe(
       catchError(error => {
         this.errorMessage = 'Erro ao buscar Pokémon do tipo especificado!';
@@ -117,6 +90,11 @@ export class PokemonComponent {
   }
 
   getPokemonStats(pokemon: Pokemon): number {
+    if(!isPokemon(pokemon)) {
+      this.errorMessage = 'Pokémon inválido!';
+      return 0;
+    }
+
     const hpStat = pokemon.stats.find(stat => stat.stat.name === 'hp');
     return hpStat ? hpStat.base_stat : 0;
   }
