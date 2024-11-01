@@ -12,7 +12,9 @@ Uma aplicação Angular que exibe informações meteorológicas usando a API Ope
 
 1. Clone o repositório:
 
-```git clone https://github.com/volinha/desafio-frontend-2024```
+```bash
+git clone https://github.com/volinha/desafio-frontend-2024
+```
 
 
 2. Instale as dependências:
@@ -27,14 +29,20 @@ npm install
 
 Inicie o servidor de desenvolvimento:
 
-```ng serve```
+```bash
+ng serve
+```
 
 ## Configuração da API
 
-Para configurar sua chave API, crie um arquivo `app.config.ts`:
+Para configurar sua chave API, crie um arquivo `environment/environment.ts`:
 
 ```typescript
-export const OPEN_WEATHER_API_KEY = 'sua-chave-api-aqui';
+export const environment = {
+  production: false,
+  openWeatherApiKey: 'SUA_CHAVE_AQUI',
+};
+
 ```
 
 ## Licença
