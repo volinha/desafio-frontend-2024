@@ -4,26 +4,21 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { OPEN_WEATHER_API_KEY } from '../app.config';
 import { catchError, throwError } from 'rxjs';
+import { WeatherData, WeatherResponse, WeatherError } from '../shared/interfaces';
 
 @Component({
   selector: 'app-weather',
   standalone: true,
   templateUrl: './weather.component.html',
-  styleUrl: './weather.component.css',
-  imports: [CommonModule, FormsModule],
 })
 export class WeatherComponent {
-  weather: any;
+  weather: WeatherResponse | null = null;
   city: string = '';
   errorMessage: string | null = null;
   isRaining: boolean = false;
   private apiUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
-  @Output() temperatureFetched = new EventEmitter<{
-    isRaining: boolean;
-    temperature: number;
-    city: string;
-  }>();
+  @Output() temperatureFetched = new EventEmitter<WeatherData>();
 
   constructor(
     @Inject(OPEN_WEATHER_API_KEY) private apiKey: string,
@@ -33,16 +28,17 @@ export class WeatherComponent {
   getWeather(city: string): void {
     const url = `${this.apiUrl}?q=${city}&appid=${this.apiKey}&units=metric`;
     this.http
-      .get(url)
+      .get<WeatherResponse>(url)
       .pipe(catchError(this.handleError))
       .subscribe({
-        next: (data: any) => {
+        next: (data) => {
           this.weather = data;
           this.errorMessage = null;
           this.temperatureFetched.emit({
             isRaining: this.checkRain(),
-            temperature: this.weather.main.temp,
+            temperature: this.weather?.main.temp || 0,
             city: this.city,
+            weather: this.weather?.weather || [],
           });
         },
         error: (error) => {
