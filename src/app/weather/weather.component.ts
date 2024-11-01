@@ -11,6 +11,7 @@ import { isWeatherData, isWeatherResponse } from '../shared/guards/type.guards';
   selector: 'app-weather',
   standalone: true,
   templateUrl: './weather.component.html',
+  imports: [FormsModule, CommonModule]
 })
 export class WeatherComponent {
   weather: WeatherResponse | null = null;

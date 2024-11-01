@@ -18,7 +18,7 @@ export const translateTypes: TranslatedTypes = {
   fire: 'Fogo',
   water: 'Água',
   electric: 'Elétrico',
-  grass: 'Grama',
+  grass: 'Planta',
   ice: 'Gelo',
   ground: 'Terra',
   bug: 'Inseto',

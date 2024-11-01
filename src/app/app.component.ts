@@ -11,10 +11,11 @@ import { RainComponent } from './rain/rain.component';
   imports: [WeatherComponent, PokemonComponent, RainComponent]
 })
 export class AppComponent {
+  title = 'weather-2';
   console = console;
-  weatherData: { isRaining: boolean; temperature: number } | null = null;
+  weatherData: { isRaining: boolean; temperature: number; city: string } | null = null;
 
-  onTemperatureFetched(data: { isRaining: boolean; temperature: number } | null) {
+  onTemperatureFetched(data: { isRaining: boolean; temperature: number, city: string } | null) {
     this.weatherData = data;
   }
 }
